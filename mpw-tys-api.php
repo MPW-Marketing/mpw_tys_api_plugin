@@ -38,8 +38,9 @@ $url = $api_url . $client_query_key . $client_id;
 //use wordpress http api to get results;
 
 $response = wp_remote_get( $url );
+$decoded_response = json_decode($response);
 
-print_r($response);
+print_r($decoded_response);
 
 }
 
