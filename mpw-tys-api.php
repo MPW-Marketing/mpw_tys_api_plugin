@@ -24,7 +24,7 @@ $api_url = 'https://api.toyoursuccess.com/1/reviews/';
 
 //set up url
 
-$url = $api_url . $tys_query_string ;
+$url = $api_url . '?' .  $tys_query_string ;
 
 //use wordpress http api to get results;
 
