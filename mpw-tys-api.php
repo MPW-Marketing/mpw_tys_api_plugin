@@ -18,6 +18,8 @@ if ( ! defined( 'WPINC' ) ) {
 
 function get_tys_api ( $tys_query_string ) {
 
+	if ( false === ( $api_response = get_transient( $tys_query_string ) ) ) { //check if api result is stored in transient
+
 // set up basic info
 $api_url = 'https://api.toyoursuccess.com/1/reviews/';
 
@@ -30,8 +32,10 @@ $url = $api_url . '?' .  $tys_query_string ;
 
 $response = wp_remote_get( $url );
 $api_reponse =  '';
-if( !is_wp_error( $response ) ) {
+if( !is_wp_error( $response ) ) { //if not an error store results in transient, expires in 1 hour
 	$api_response = json_decode( wp_remote_retrieve_body( $response ), true );
+	set_transient( $tys_query_string, $api_response, 1 * HOUR_IN_SECONDS );
+}
 }
 
 return $api_response;
@@ -54,19 +58,12 @@ if ( $client_id == '' ) {
 
 $tys_data = array();
 $tys_data['client'] = $client_id;
-$tys_data['location'] = $client_location;
-$tys_data['department'] = $client_department;
 $tys_data['limit_reviews'] = $limit_reviews;
 $tys_data['minimum_rating'] = $minimum_rating;
+$tys_data['location'] = $client_location;
+$tys_data['department'] = $client_department;
 
-$tys_query =  http_build_query($tys_data, '', '&amp;');
-$client_query_key = '?client=';
-$location_query_key = '&location=';
-$department_query_key = '&department=';
-$limit_query_key = '&limit_reviews=';
-$minimum_rating = '&minimum_rating=';
-
-$tys_query_string = $client_query_key . $client_id . $limit_query_key . $limit_reviews;
+$tys_query =  http_build_query($tys_data);
 
 $api_response = get_tys_api($tys_query);
 
