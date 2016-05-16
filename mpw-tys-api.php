@@ -3,7 +3,7 @@
 /**
  * Plugin Name:       MPW To Your Success API integration
  * Description:       Provide shgortcodes for working with the To Your Success API
- * Version:           0.1.0
+ * Version:           0.2.0
  * Author:            dmm
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
@@ -29,8 +29,10 @@ $url = $api_url . $tys_query_string ;
 //use wordpress http api to get results;
 
 $response = wp_remote_get( $url );
-$api_response = json_decode( wp_remote_retrieve_body( $response ), true );
-
+$api_reponse =  '';
+if( !is_wp_error( $response ) ) {
+	$api_response = json_decode( wp_remote_retrieve_body( $response ), true );
+}
 
 return $api_response;
 }
@@ -49,6 +51,15 @@ function print_testimonials ( $atts ) {
 if ( $client_id == '' ) {
   return;
 }
+
+$tys_data = array();
+$tys_data['client'] = $client_id;
+$tys_data['location'] = $client_location;
+$tys_data['department'] = $client_department;
+$tys_data['limit_reviews'] = $limit_reviews;
+$tys_data['minimum_rating'] = $minimum_rating;
+
+$tys_query =  http_build_query($tys_data, '', '&amp;');
 $client_query_key = '?client=';
 $location_query_key = '&location=';
 $department_query_key = '&department=';
@@ -57,7 +68,7 @@ $minimum_rating = '&minimum_rating=';
 
 $tys_query_string = $client_query_key . $client_id . $limit_query_key . $limit_reviews;
 
-$api_response = get_tys_api($tys_query_string);
+$api_response = get_tys_api($tys_query);
 
 $loc = $api_response['reviews']['locations'];
 $cont = '';
