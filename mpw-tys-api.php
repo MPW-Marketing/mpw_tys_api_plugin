@@ -15,7 +15,7 @@
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
-
+class tys_api {
 function get_tys_api ( $tys_query_string ) {
 
 	if ( false === ( $api_response = get_transient( $tys_query_string ) ) ) { //check if api result is stored in transient
@@ -39,7 +39,9 @@ if( !is_wp_error( $response ) ) { //if not an error store results in transient, 
 }
 
 return $api_response;
+}	
 }
+
 
 
 
