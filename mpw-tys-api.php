@@ -68,7 +68,19 @@ $tys_query =  http_build_query($tys_data);
 $api_response = get_tys_api($tys_query);
 
 $loc = $api_response['reviews']['locations'];
+$star_image =  plugins_url( '/images/star-40px-padded.png', __FILE__ );
 $cont = '';
+$cont .= '<style>.star-rating span {
+    background: url("'.$star_image.'");
+    background-repeat: repeat-x;
+    display: inline-block;
+    background-size: contain;
+	    height: 20px;
+}
+span.rating {
+    height: 0;
+    font-size: 0;
+}</style>';
 foreach ($loc as $key => $value) {
 	$dep = $loc[$key]['departments'];
 	
@@ -79,8 +91,11 @@ foreach ($loc as $key => $value) {
 			$rev_name = $dep_reviews[$rev_key]['name'];
 			$rev_city = $dep_reviews[$rev_key]['city'];
 			$rev_state = $dep_reviews[$rev_key]['state'];
-			$cont .= '<p><strong>"'.$dep_reviews[$rev_key]['comment'].'"</strong><br />';
-			$cont .= '<em>' . $dep_reviews[$rev_key]['name'] . ' - ' . $dep_reviews[$rev_key]['city'] . ', ' . $dep_reviews[$rev_key]['state'] . '</em></p><hr />';
+			$star_width = ($dep_reviews[$rev_key]['star_rating'] * 22) - 1;
+			$cont .= '<div class="single-review">';
+			$cont .= '<div class="star-rating" itemprop="aggregateRating" itemscope="" itemtype="http://schema.org/AggregateRating"><span class="star-rating" title="Rated '.$dep_reviews[$rev_key]['star_rating'].' out of 5"><span style="width:'.$star_width.'px"><span itemprop="ratingValue" class="rating">'.$dep_reviews[$rev_key]['star_rating'].'</span> </span></span></div>';
+			$cont .= '<p class="review-text"><strong>"'.$dep_reviews[$rev_key]['comment'].'"</strong></p>';
+			$cont .= '<p class="review-info"><em>' . $dep_reviews[$rev_key]['name'] . ' - ' . $dep_reviews[$rev_key]['city'] . ', ' . $dep_reviews[$rev_key]['state'] . '</em></p></div><hr />';
 		}
 	}
 }
